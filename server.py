@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, redirect, make_response
 from flask_cors import CORS
 import anthropic
 import requests
@@ -13,6 +13,64 @@ from PIL import Image
 
 app = Flask(__name__, static_folder="static")
 CORS(app)
+
+APP_PASSWORD = os.environ.get("APP_PASSWORD", "")
+
+@app.before_request
+def check_password():
+    if not APP_PASSWORD:
+        return None
+    if request.path.startswith("/static"):
+        return None
+    auth = request.cookies.get("app_auth")
+    if auth == APP_PASSWORD:
+        return None
+    if request.path == "/login" and request.method == "POST":
+        return None
+    if request.path == "/login":
+        return None
+    return redirect("/login")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = ""
+    if request.method == "POST":
+        pwd = request.form.get("password", "")
+        if pwd == APP_PASSWORD:
+            resp = make_response(redirect("/"))
+            resp.set_cookie("app_auth", APP_PASSWORD, max_age=60*60*24*30)
+            return resp
+        error = "Wrong password. Try again."
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+<title>Way to Hunt — Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<style>
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{ font-family: 'Georgia', serif; background: #f8f4ee; display: flex; align-items: center; justify-content: center; min-height: 100vh; }}
+  .box {{ background: #fff; border: 1px solid #e5ddd3; border-radius: 14px; padding: 48px 40px; width: 100%; max-width: 380px; text-align: center; }}
+  h1 {{ font-size: 28px; font-weight: 400; color: #1a1410; font-style: italic; margin-bottom: 6px; }}
+  p {{ font-size: 12px; color: #b0a090; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 32px; }}
+  input {{ width: 100%; border: 1.5px solid #e5ddd3; border-radius: 9px; padding: 12px 16px; font-size: 15px; font-family: inherit; outline: none; margin-bottom: 16px; background: #fdfaf5; }}
+  input:focus {{ border-color: #d9956e; }}
+  button {{ width: 100%; padding: 13px; background: #b86a42; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-family: 'Georgia', serif; cursor: pointer; }}
+  button:hover {{ background: #a35a34; }}
+  .error {{ color: #c0392b; font-size: 13px; margin-top: 12px; }}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>Way to Hunt</h1>
+  <p>Blog Studio</p>
+  <form method="POST">
+    <input type="password" name="password" placeholder="Enter password" autofocus/>
+    <button type="submit">Enter</button>
+  </form>
+  <div class="error">{error}</div>
+</div>
+</body>
+</html>"""
 
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config.json")
 
