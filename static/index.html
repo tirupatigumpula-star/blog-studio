@@ -231,8 +231,13 @@
   </div>
 
   <!-- Save button -->
-  <button class="btn-save-settings" onclick="saveSettings()">💾 Save Credentials</button>
-  <div class="save-msg" id="save-msg"></div>
+  <div id="env-notice" style="display:none;font-size:12px;padding:12px 16px;background:#eef4fb;border:1px solid #b8d0ed;border-radius:9px;color:#2c4a6e;line-height:1.6;">
+    🔒 <strong>Credentials are locked</strong> — loaded from server environment variables. They cannot be edited here. To change them update the variables on Railway.
+  </div>
+  <div id="save-settings-wrap">
+    <button class="btn-save-settings" onclick="saveSettings()">💾 Save Credentials</button>
+    <div class="save-msg" id="save-msg"></div>
+  </div>
 
 </div>
 </div>
@@ -248,10 +253,45 @@ window.addEventListener('DOMContentLoaded', async () => {
     const res  = await fetch('/api/config');
     const data = await res.json();
     savedConfig = data;
+
+    const fromEnv = data.from_env || {};
+
+    // Fill fields
     if (data.claude_api_key) document.getElementById('s-claude-key').value = data.claude_api_key;
     if (data.wp_url)         document.getElementById('s-wp-url').value     = data.wp_url;
     if (data.wp_user)        document.getElementById('s-wp-user').value    = data.wp_user;
     if (data.wp_pass)        document.getElementById('s-wp-pass').value    = data.wp_pass;
+
+    // Lock fields that came from environment variables
+    const lockField = (inputId, eyeId, isLocked) => {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (isLocked) {
+        input.readOnly = true;
+        input.style.background = '#f0ebe4';
+        input.style.color = '#b0a090';
+        input.style.cursor = 'not-allowed';
+        if (eyeId) document.getElementById(eyeId).style.display = 'none';
+      }
+    };
+
+    lockField('s-claude-key', 'eye1', fromEnv.claude_api_key);
+    lockField('s-wp-url',     null,   fromEnv.wp_url);
+    lockField('s-wp-user',    null,   fromEnv.wp_user);
+    lockField('s-wp-pass',    'eye2', fromEnv.wp_pass);
+
+    // Show env notice if any vars come from environment
+    const anyFromEnv = Object.values(fromEnv).some(Boolean);
+    if (anyFromEnv) {
+      const notice = document.getElementById('env-notice');
+      if (notice) notice.style.display = 'block';
+      // Hide save button if ALL come from env
+      const allFromEnv = fromEnv.claude_api_key && fromEnv.wp_url && fromEnv.wp_user && fromEnv.wp_pass;
+      if (allFromEnv) {
+        document.getElementById('save-settings-wrap').style.display = 'none';
+      }
+    }
+
     updateCredBar(data);
   } catch(e) {
     updateCredBar({});
