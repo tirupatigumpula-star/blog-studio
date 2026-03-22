@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Home Decor Blog Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--ink:#1a1410;--cream:#f8f4ee;--warm:#fdfaf5;--clay:#b86a42;--clay-l:#d9956e;--clay-d:#f2e4da;--sage:#7a9178;--mid:#6b5b4e;--muted:#b0a090;--border:#e5ddd3;--white:#fff}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+
+  /* masthead */
+  .mast{background:var(--ink);padding:0 40px;display:flex;align-items:center;min-height:68px;gap:14px}
+  .mast-icon{width:40px;height:40px;background:var(--clay);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+  .mast h1{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:var(--warm)}
+  .mast h1 em{color:var(--clay-l);font-style:italic}
+  .mast-badge{margin-left:auto;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:6px}
+  .bdot{width:6px;height:6px;border-radius:50%;background:var(--clay);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .settings-btn{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);border-radius:8px;padding:6px 14px;font-family:'Jost',sans-serif;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;margin-left:16px}
+  .settings-btn:hover{border-color:var(--clay-l);color:var(--clay-l)}
+
+  /* tabs */
+  .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--white)}
+  .tab{padding:14px 28px;font-family:'Jost',sans-serif;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all .2s}
+  .tab.active{color:var(--clay);border-bottom-color:var(--clay)}
+  .tab-panel{display:none}.tab-panel.active{display:block}
+
+  .page{max-width:820px;margin:0 auto;padding:40px 20px 80px;display:flex;flex-direction:column;gap:24px}
+  .card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .card-head{padding:18px 26px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+  .snum{width:26px;height:26px;background:var(--clay);color:#fff;border-radius:50%;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .card-head h2{font-family:'Playfair Display',serif;font-size:17px;font-weight:400;color:var(--mid);margin:0}
+  .card-body{padding:22px 26px}
+  .field{margin-bottom:16px}.field:last-child{margin-bottom:0}
+  label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--mid);display:block;margin-bottom:6px}
+  input[type=text],input[type=url],input[type=password]{border:1.5px solid var(--border);border-radius:9px;padding:10px 14px;font-family:'Jost',sans-serif;font-size:14px;color:var(--ink);background:var(--warm);outline:none;width:100%;transition:border-color .2s,box-shadow .2s}
+  input:focus{border-color:var(--clay-l);box-shadow:0 0 0 3px rgba(184,106,66,.1)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:560px){.two-col{grid-template-columns:1fr}}
+  .helper{font-size:12px;color:var(--muted);line-height:1.55;padding:10px 14px;background:var(--clay-d);border-radius:7px;margin-top:6px}
+  .key-wrap{position:relative}.key-wrap input{padding-right:42px}
+  .eye-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:var(--muted);padding:4px}
+
+  /* save settings button */
+  .btn-save-settings{width:100%;padding:13px;background:var(--clay);color:#fff;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn-save-settings:hover{background:#a35a34}
+  .save-msg{font-size:13px;color:var(--sage);margin-top:10px;text-align:center;min-height:20px}
+
+  .prompt-box{background:var(--cream);border:1px solid var(--border);border-radius:9px;padding:14px 16px;font-size:14px;color:var(--mid);line-height:1.7}
+  .prompt-tag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--clay);display:block;margin-bottom:6px}
+  .dz{border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;background:var(--cream);transition:all .2s}
+  .dz:hover,.dz.over{border-color:var(--clay-l);background:var(--clay-d)}
+  .img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:16px}
+  .img-thumb{aspect-ratio:1;border-radius:9px;overflow:hidden;position:relative;border:1.5px solid var(--border)}
+  .img-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .img-thumb .rm{position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(26,20,16,.72);color:#fff;border:none;border-radius:50%;font-size:11px;cursor:pointer;opacity:0;transition:opacity .15s;display:flex;align-items:center;justify-content:center}
+  .img-thumb:hover .rm{opacity:1}
+  .img-thumb .fname{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(26,20,16,.6));color:#fff;font-size:9px;padding:10px 4px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .img-count{font-size:12px;color:var(--muted);margin-top:10px}
+
+  .btn-row{display:flex;gap:12px}
+  .btn-gen{flex:1;padding:16px;background:var(--clay);color:#fff;border:none;border-radius:12px;font-family:'Playfair Display',serif;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 2px 12px rgba(184,106,66,.28);transition:background .2s,transform .15s}
+  .btn-gen:hover:not(:disabled){background:#a35a34;transform:translateY(-2px)}
+  .btn-gen:disabled{opacity:.55;cursor:not-allowed;transform:none}
+  .btn-test{padding:16px 22px;background:none;border:2px solid var(--border);border-radius:12px;font-family:'Jost',sans-serif;font-size:14px;font-weight:500;color:var(--mid);cursor:pointer;transition:all .2s;white-space:nowrap}
+  .btn-test:hover{border-color:var(--clay);color:var(--clay)}
+  .btn-test:disabled{opacity:.5;cursor:not-allowed}
+
+  .test-result{display:none;background:#151210;border-radius:9px;padding:14px 16px;font-family:monospace;font-size:12px;line-height:1.9;margin-top:12px}
+  .test-result.show{display:block}
+  .tr-ok{color:#80e8a4}.tr-fail{color:#e88080}.tr-label{color:#b0a090}
+
+  .prog{display:none}.prog.show{display:block}
+  .prog-label{font-size:13px;color:var(--mid);margin-bottom:8px;font-weight:500}
+  .prog-track{background:var(--border);height:5px;border-radius:99px;overflow:hidden}
+  .prog-fill{height:100%;background:linear-gradient(90deg,var(--clay),var(--clay-l));border-radius:99px;width:0%;transition:width .5s ease}
+  .logbox{margin-top:12px;background:#151210;border-radius:9px;padding:12px 14px;max-height:150px;overflow-y:auto;font-family:monospace;font-size:11px}
+  .ll{padding:2px 0}.ll.i{color:#8ec4a4}.ll.w{color:#e8c580}.ll.e{color:#e88080}.ll.s{color:#80e8a4}
+
+  .result{display:none}.result.show{display:block}
+  .result-head{background:var(--ink);color:var(--warm);padding:14px 22px;display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-size:17px;border-radius:14px 14px 0 0}
+  .rdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .result-body{padding:20px 24px}
+  .wp-link{display:inline-flex;align-items:center;gap:7px;color:var(--clay);font-size:13px;font-weight:500;border:1.5px solid var(--clay);padding:8px 16px;border-radius:8px;text-decoration:none;margin-bottom:16px;transition:all .2s}
+  .wp-link:hover{background:var(--clay);color:#fff}
+  .art-preview{background:var(--cream);border:1px solid var(--border);border-radius:9px;padding:20px 22px;font-family:'Playfair Display',serif;font-size:15px;line-height:1.8;max-height:380px;overflow-y:auto;white-space:pre-wrap}
+  .copy-btn{margin-top:10px;background:none;border:1px solid var(--border);border-radius:7px;padding:7px 16px;font-family:'Jost',sans-serif;font-size:13px;color:var(--mid);cursor:pointer;transition:all .2s}
+  .copy-btn:hover{border-color:var(--clay);color:var(--clay)}
+
+  /* credentials status bar */
+  .cred-bar{display:flex;align-items:center;gap:8px;font-size:12px;padding:10px 14px;background:var(--clay-d);border-radius:9px;margin-bottom:4px}
+  .cred-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .cred-dot.ok{background:var(--sage)}
+  .cred-dot.missing{background:#e07070}
+</style>
+</head>
+<body>
+
+<div class="mast">
+  <div class="mast-icon">🪴</div>
+  <h1>Home Decor <em>Blog Studio</em></h1>
+  <div class="mast-badge"><div class="bdot"></div>AI · WordPress</div>
+  <button class="settings-btn" onclick="switchTab('settings')">⚙️ Settings</button>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" id="tab-write"    onclick="switchTab('write')">✦ Write Article</button>
+  <button class="tab"        id="tab-settings" onclick="switchTab('settings')">⚙️ Settings &amp; Credentials</button>
+</div>
+
+<!-- ══════════════ WRITE TAB ══════════════ -->
+<div class="tab-panel active" id="panel-write">
+<div class="page">
+
+  <!-- Credentials status -->
+  <div class="cred-bar" id="cred-bar">
+    <div class="cred-dot missing" id="cred-dot"></div>
+    <span id="cred-msg">Loading saved credentials…</span>
+    <button onclick="switchTab('settings')" style="margin-left:auto;background:none;border:1px solid var(--clay);color:var(--clay);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:'Jost',sans-serif">Edit</button>
+  </div>
+
+  <!-- Article options -->
+  <div class="card">
+    <div class="card-head"><div class="snum">1</div><h2>Article Options</h2></div>
+    <div class="card-body">
+      <div class="prompt-box">
+        <span class="prompt-tag">🔒 Fixed home decor prompt</span>
+        Structure: H1 Title → Introduction → H2 Main Keyword → H3 Idea + Image + Description (per image) → H2 Final Words → Conclusion. Tone: elegant, approachable, inspiring.
+      </div>
+      <div class="field" style="margin-top:18px">
+        <label>Post Title <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:11px">(optional — AI generates if blank)</span></label>
+        <input type="text" id="post-title" placeholder="e.g. 10 Inspiring Home Decor Ideas for Autumn"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Images -->
+  <div class="card">
+    <div class="card-head"><div class="snum">2</div><h2>Upload Images</h2></div>
+    <div class="card-body">
+      <div class="dz" id="dz" onclick="document.getElementById('fi').click()">
+        <input type="file" id="fi" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)"/>
+        <div style="font-size:34px;margin-bottom:10px">🖼️</div>
+        <div style="font-size:15px;font-weight:500;margin-bottom:4px"><span style="color:var(--clay);text-decoration:underline;text-underline-offset:2px">Browse files</span> or drag &amp; drop</div>
+        <div style="font-size:12px;color:var(--muted)">JPEG · PNG · WebP — up to 30 images</div>
+      </div>
+      <div class="img-grid" id="img-grid"></div>
+      <div class="img-count" id="img-count"></div>
+    </div>
+  </div>
+
+  <!-- Generate -->
+  <div class="btn-row">
+    <button class="btn-gen" id="gen-btn" onclick="run()">
+      <span>✦</span> Analyse &amp; Publish to WordPress
+    </button>
+  </div>
+
+  <!-- Progress -->
+  <div class="prog" id="prog">
+    <div class="prog-label" id="prog-label">Starting…</div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    <div class="logbox" id="logbox"></div>
+  </div>
+
+  <!-- Result -->
+  <div class="result card" id="result">
+    <div class="result-head">
+      <div class="rdot" id="rdot"></div>
+      <span id="rtitle">Result</span>
+    </div>
+    <div class="result-body">
+      <div id="rmsg" style="font-size:14px;color:var(--mid);margin-bottom:12px"></div>
+      <a id="rlink" class="wp-link" href="#" target="_blank" style="display:none">🔗 Edit Post in WordPress</a>
+      <div id="rpreview" class="art-preview" style="display:none"></div>
+      <button id="rcopy" class="copy-btn" onclick="copyArt()" style="display:none">📋 Copy Article</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════ SETTINGS TAB ══════════════ -->
+<div class="tab-panel" id="panel-settings">
+<div class="page">
+
+  <div class="card">
+    <div class="card-head"><div class="snum">🔑</div><h2>Claude API Key</h2></div>
+    <div class="card-body">
+      <div class="field">
+        <label>API Key</label>
+        <div class="key-wrap">
+          <input type="password" id="s-claude-key" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false"/>
+          <button class="eye-btn" onclick="toggleEye('s-claude-key','eye1')" id="eye1">👁️</button>
+        </div>
+      </div>
+      <div class="helper">🔑 Get from <strong>console.anthropic.com → API Keys → Create Key</strong>.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="snum">🌐</div><h2>WordPress Connection</h2></div>
+    <div class="card-body">
+      <div class="field">
+        <label>WordPress Site URL</label>
+        <input type="url" id="s-wp-url" placeholder="https://yourblog.com"/>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" id="s-wp-user" placeholder="admin" autocomplete="username"/>
+        </div>
+        <div class="field">
+          <label>WordPress Password</label>
+          <div class="key-wrap">
+            <input type="password" id="s-wp-pass" placeholder="Your WP login password" autocomplete="current-password"/>
+            <button class="eye-btn" onclick="toggleEye('s-wp-pass','eye2')" id="eye2">👁️</button>
+          </div>
+        </div>
+      </div>
+      <div class="helper">🔑 Use your normal <strong>WordPress login password</strong>. Stored locally on your computer in <code>config.json</code> — never sent anywhere except your own site.</div>
+
+      <div style="margin-top:16px">
+        <button class="btn-test" id="test-btn" onclick="testWP()">🔌 Test Connection</button>
+        <div class="test-result" id="test-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save button -->
+  <button class="btn-save-settings" onclick="saveSettings()">💾 Save Credentials</button>
+  <div class="save-msg" id="save-msg"></div>
+
+</div>
+</div>
+
+<script>
+const imgs = [];
+let lastArt = '';
+let savedConfig = {};
+
+// ── Init: load saved config ───────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res  = await fetch('/api/config');
+    const data = await res.json();
+    savedConfig = data;
+    if (data.claude_api_key) document.getElementById('s-claude-key').value = data.claude_api_key;
+    if (data.wp_url)         document.getElementById('s-wp-url').value     = data.wp_url;
+    if (data.wp_user)        document.getElementById('s-wp-user').value    = data.wp_user;
+    if (data.wp_pass)        document.getElementById('s-wp-pass').value    = data.wp_pass;
+    updateCredBar(data);
+  } catch(e) {
+    updateCredBar({});
+  }
+});
+
+function updateCredBar(cfg) {
+  const allSet = cfg.claude_api_key && cfg.wp_url && cfg.wp_user && cfg.wp_pass;
+  document.getElementById('cred-dot').className = 'cred-dot ' + (allSet ? 'ok' : 'missing');
+  document.getElementById('cred-msg').textContent = allSet
+    ? `✓ Credentials loaded — ${cfg.wp_url}`
+    : 'Credentials not saved yet — go to Settings to add them';
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// ── Save settings ─────────────────────────────────────────────────────────
+async function saveSettings() {
+  const cfg = {
+    claude_api_key: document.getElementById('s-claude-key').value.trim(),
+    wp_url:         document.getElementById('s-wp-url').value.trim().replace(/\/$/, ''),
+    wp_user:        document.getElementById('s-wp-user').value.trim(),
+    wp_pass:        document.getElementById('s-wp-pass').value.trim(),
+  };
+  try {
+    await fetch('/api/config', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cfg)
+    });
+    savedConfig = cfg;
+    updateCredBar(cfg);
+    const msg = document.getElementById('save-msg');
+    msg.textContent = '✓ Credentials saved! They will load automatically next time.';
+    setTimeout(() => { msg.textContent = ''; }, 4000);
+  } catch(e) {
+    document.getElementById('save-msg').textContent = '✗ Failed to save: ' + e.message;
+  }
+}
+
+// ── Eye toggles ───────────────────────────────────────────────────────────
+function toggleEye(inputId, btnId) {
+  const inp = document.getElementById(inputId);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  document.getElementById(btnId).textContent = inp.type === 'text' ? '🙈' : '👁️';
+}
+
+// ── Drop zone ─────────────────────────────────────────────────────────────
+const dz = document.getElementById('dz');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); handleFiles(e.dataTransfer.files); });
+
+function handleFiles(files) {
+  const rem = 30 - imgs.length;
+  Array.from(files).slice(0, rem).forEach(f => {
+    const r = new FileReader();
+    r.onload = ev => {
+      imgs.push({ base64: ev.target.result.split(',')[1], mime: f.type, name: f.name, dataUrl: ev.target.result });
+      renderGrid();
+    };
+    r.readAsDataURL(f);
+  });
+}
+function removeImg(i) { imgs.splice(i, 1); renderGrid(); }
+function renderGrid() {
+  document.getElementById('img-grid').innerHTML = imgs.map((img, i) => `
+    <div class="img-thumb">
+      <img src="${img.dataUrl}" alt="${img.name}"/>
+      <button class="rm" onclick="removeImg(${i})">×</button>
+      <div class="fname">${img.name}</div>
+    </div>`).join('');
+  document.getElementById('img-count').textContent =
+    imgs.length ? `${imgs.length} image${imgs.length > 1 ? 's' : ''} selected` : '';
+}
+
+// ── Progress ──────────────────────────────────────────────────────────────
+function setP(pct, label) {
+  document.getElementById('prog').classList.add('show');
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = label;
+}
+function addLog(msg, t = 'i') {
+  const b = document.getElementById('logbox');
+  b.insertAdjacentHTML('beforeend', `<div class="ll ${t}">[${new Date().toLocaleTimeString()}] ${msg}</div>`);
+  b.scrollTop = b.scrollHeight;
+}
+
+// ── Test connection ───────────────────────────────────────────────────────
+async function testWP() {
+  const wpUrl  = document.getElementById('s-wp-url').value.trim().replace(/\/$/, '');
+  const wpUser = document.getElementById('s-wp-user').value.trim();
+  const wpPass = document.getElementById('s-wp-pass').value.trim();
+  if (!wpUrl || !wpUser || !wpPass) { alert('Fill in URL, username and password first.'); return; }
+
+  const btn = document.getElementById('test-btn');
+  const box = document.getElementById('test-result');
+  btn.disabled = true; btn.textContent = '⏳ Testing…';
+  box.className = 'test-result show';
+  box.innerHTML = '<span style="color:#b0a090">Running checks…</span>';
+
+  try {
+    const res  = await fetch('/api/test-wp', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ wpUrl, wpUser, wpPass })
+    });
+    const data = await res.json();
+    box.innerHTML = Object.entries(data).map(([k, v]) => {
+      const ok = v.startsWith('✅');
+      return `<div><span class="tr-label">${k}: </span><span class="${ok ? 'tr-ok' : 'tr-fail'}">${v}</span></div>`;
+    }).join('');
+  } catch(e) {
+    box.innerHTML = `<span class="tr-fail">Error: ${e.message}</span>`;
+  } finally {
+    btn.disabled = false; btn.textContent = '🔌 Test Connection';
+  }
+}
+
+// ── Generate ──────────────────────────────────────────────────────────────
+async function run() {
+  const apiKey    = savedConfig.claude_api_key || document.getElementById('s-claude-key').value.trim();
+  const wpUrl     = savedConfig.wp_url         || document.getElementById('s-wp-url').value.trim().replace(/\/$/, '');
+  const wpUser    = savedConfig.wp_user        || document.getElementById('s-wp-user').value.trim();
+  const wpPass    = savedConfig.wp_pass        || document.getElementById('s-wp-pass').value.trim();
+  const postTitle = document.getElementById('post-title').value.trim();
+
+  if (!apiKey)  { alert('No Claude API key found. Go to Settings and save your credentials.'); switchTab('settings'); return; }
+  if (!wpUrl)   { alert('No WordPress URL found. Go to Settings and save your credentials.'); switchTab('settings'); return; }
+  if (!wpUser)  { alert('No WordPress username found. Go to Settings and save your credentials.'); switchTab('settings'); return; }
+  if (!wpPass)  { alert('No WordPress password found. Go to Settings and save your credentials.'); switchTab('settings'); return; }
+  if (!imgs.length) { alert('Please upload at least one image.'); return; }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('logbox').innerHTML = '';
+  setP(5, 'Connecting to WordPress…');
+  addLog(`Starting — ${imgs.length} image(s) queued`);
+
+  try {
+    const res  = await fetch('/api/generate', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        apiKey, wpUrl, wpUser, wpPass, postTitle,
+        images: imgs.map(({ base64, mime, name }) => ({ base64, mime, name }))
+      })
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || `Server error ${res.status}`);
+
+    setP(100, 'Done! ✓');
+    addLog('Article generated ✓', 's');
+    if (data.mediaErrors?.length) data.mediaErrors.forEach(e => addLog(e, 'w'));
+    addLog(`Post ID ${data.postId} saved as draft ✓`, 's');
+    showResult(true, `"${data.title}" saved as draft — ID ${data.postId}`, data.editUrl, data.article);
+  } catch(err) {
+    addLog(`Error: ${err.message}`, 'e');
+    setP(100, 'Failed');
+    showResult(false, err.message, null, null);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function showResult(ok, msg, link, article) {
+  const card = document.getElementById('result');
+  card.classList.add('show');
+  document.getElementById('rdot').style.background = ok ? '#7a9178' : '#e07070';
+  document.getElementById('rtitle').textContent = ok ? '✓ Post saved to WordPress' : '✗ Failed';
+  document.getElementById('rmsg').textContent = msg;
+  const lnk = document.getElementById('rlink');
+  lnk.style.display = (ok && link) ? '' : 'none';
+  if (ok && link) lnk.href = link;
+  const prev = document.getElementById('rpreview');
+  const cpy  = document.getElementById('rcopy');
+  if (article) { prev.textContent = article; prev.style.display = ''; cpy.style.display = ''; lastArt = article; }
+  else { prev.style.display = 'none'; cpy.style.display = 'none'; }
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyArt() {
+  navigator.clipboard.writeText(lastArt).then(() => {
+    const b = document.getElementById('rcopy');
+    b.textContent = '✓ Copied!';
+    setTimeout(() => { b.textContent = '📋 Copy Article'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
