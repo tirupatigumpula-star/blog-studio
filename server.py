@@ -220,11 +220,14 @@ def build_html_with_images(article_md, image_urls):
                     (r[4:-5] for r in reversed(result) if r.startswith("<h3>")),
                     f"Home decor image {img_index + 1}"
                 )
+               img_filename = image_urls[img_index].split("/")[-1]
+                img_caption = os.path.splitext(img_filename)[0].replace("-", " ").replace("_", " ").title()
                 result.append(
-                    f'<figure class="wp-block-image size-large">'
-                    f'<img src="{image_urls[img_index]}" alt="{prev_h3}" />'
-                    f'</figure>'
-                )
+                        f'<figure class="wp-block-image size-large">'
+                        f'<img src="{image_urls[img_index]}" alt="{img_caption}" />'
+                        f'<figcaption>{img_caption}</figcaption>'
+                        f'</figure>'
+                        )
                 img_index += 1
             i += 1
         elif line.strip() == "":
